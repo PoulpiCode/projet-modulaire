@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  web:
+    build: ./web
+    ports:
+      - "8080:8080"
+    depends_on:
+      - processing
+      - database
+
+  processing:
+    build: ./processing
+    ports:
+      - "5001:5001"
+    depends_on:
+      - database
+
+  database:
+    build: ./database
+    ports:
+      - "5003:8080"   # <-- expose Database 8080 sur host 5003
+    
