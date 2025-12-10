@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Projet Modulaire - Logs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Projet Modulaire</h1>
+
+    <section>
+        <h2>Importer CSV</h2>
+        <button id="importBtn">Lancer l'import CSV</button>
+        <p id="importResult"></p>
+    </section>
+
+    <section>
+        <h2>Logs</h2>
+        <table id="logsTable" border="1">
+            <thead>
+                <tr><th>#</th><th>Timestamp</th><th>Level</th><th>Message</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button id="prevBtn">Précédent</button>
+        <button id="nextBtn">Suivant</button>
+        <p id="pageInfo"></p>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

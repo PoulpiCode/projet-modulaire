@@ -1,46 +1,63 @@
 const express = require("express");
-const fetch = (...args) => import("node-fetch").then(({default: f}) => f(...args));
-
+const fetch = require("node-fetch");
 const app = express();
-app.use(express.urlencoded({ extended: true }));
+const PORT = 8080;
 
-// Page principale
+app.use(express.static(__dirname)); // Pour style.css
+
+// Redirection de / vers /logs/all-web
 app.get("/", (req, res) => {
-  res.send(`
-    <h1>Projet modulaire simple</h1>
-
-    <h2>Envoyer du texte au service Python</h2>
-    <form method="POST" action="/process">
-      <input name="text" placeholder="Texte..." />
-      <button>Envoyer</button>
-    </form>
-
-    <h2>Test de la connexion au service C# (Database)</h2>
-    <a href="/testdb">Tester Database</a>
-  `);
+    res.redirect("/logs/all-web");
 });
 
-// Endpoint pour tester Python
-app.post("/process", async (req, res) => {
-  const response = await fetch("http://processing:5001/process", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ text: req.body.text })
-  });
+app.get("/logs/all-web", async (req, res) => {
+    try {
+        const response = await fetch("http://database:8080/logs/all");
+        const logs = await response.json();
 
-  const data = await response.json();
-  res.send(`<h1>Résultat Python :</h1><pre>${JSON.stringify(data, null, 2)}</pre><a href="/">Retour</a>`);
+        // Affiche juste Title, Type et Status
+        let tableRows = logs.map((log, i) => {
+            return `<tr>
+                        <td>${i+1}</td>
+                        <td>${log.message || ""}</td>
+                    </tr>`;
+        }).join("");
+
+        const html = `
+            <html>
+            <head>
+                <link rel="stylesheet" href="style.css">
+                <title>Logs</title>
+            </head>
+            <body>
+                <h1>Logs Import CSV</h1>
+                <button onclick="importCSV()">Importer CSV</button>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Infos (Title | Type | Status)</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tableRows}</tbody>
+                </table>
+
+                <script>
+                    async function importCSV() {
+                        const res = await fetch("http://localhost:5001/importcsv");
+                        const data = await res.json();
+                        alert('Import terminé: ' + data.imported + ' lignes');
+                        location.reload();
+                    }
+                </script>
+            </body>
+            </html>
+        `;
+        res.send(html);
+    } catch (e) {
+        res.send("Erreur: " + e.message);
+    }
 });
 
-// **NOUVEAU** : endpoint pour tester Database
-app.get("/testdb", async (req, res) => {
-  try {
-    const response = await fetch("http://database:8080/"); // attention au port Database
-    const text = await response.text();
-    res.send(`<h1>Database response:</h1><pre>${text}</pre><a href="/">Retour</a>`);
-  } catch (err) {
-    res.send(`<h1>Erreur :</h1><pre>${err}</pre><a href="/">Retour</a>`);
-  }
-});
-
-app.listen(8080, () => console.log("Web running on 8080"));
+app.listen(PORT, () => console.log(`Web serveur sur http://localhost:${PORT}`));
