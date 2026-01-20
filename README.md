@@ -40,9 +40,9 @@ http://localhost:8080
 
 ## Diagramme de séquence
 
-![Diagramme de séquence](https://github.com/user-attachments/assets/5c4e9b0a-4f5e-4b0e-8e0a-6b8f5e5e5e5e)
+![Diagramme de séquence](Page_1.png)
 
 ## Dataflow
 
-![Dataflow](https://github.com/user-attachments/assets/5c4e9b0a-4f5e-4b0e-8e0a-6b8f5e5e5e5f)
+![Dataflow](Page_2.png)
 
