@@ -1,0 +1,25 @@
+services:
+  mongo:
+    image: mongo:latest
+    container_name: sgbd_mongo
+    ports:
+      - "27017:27017"
+
+  backend:
+    build: ./backend
+    container_name: service_traitement
+    depends_on:
+      - mongo
+    ports:
+      - "5000:5000"
+
+  proxy:
+    image: nginx:alpine
+    container_name: ihm_proxy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/index.html:/usr/share/nginx/html/index.html:ro
+    depends_on:
+      - backend

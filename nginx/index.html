@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Migration Tool</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f7f6; }
+        .scroll { max-height: 500px; overflow-y: auto; border: 1px solid #ccc; margin-top: 20px; background: white; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #333; color: white; padding: 10px; position: sticky; top: 0; text-align: left; }
+        td { padding: 8px; border: 1px solid #eee; font-size: 12px; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <h2>Outil de Migration</h2>
+    <input type="file" id="csvFile">
+    <button onclick="upload()">Lancer l'import</button>
+    <p id="msg"></p>
+
+    <div class="scroll" id="win" style="display:none">
+        <table>
+            <thead id="h"></thead>
+            <tbody id="b"></tbody>
+        </table>
+    </div>
+
+    <script>
+    async function upload() {
+        const fileInput = document.getElementById('csvFile');
+        const file = fileInput.files[0];
+        if (!file) return alert("Choisis un fichier");
+
+        const fd = new FormData();
+        fd.append('file', file);
+        
+        document.getElementById('msg').innerText = "⏳ Chargement en cours...";
+        document.getElementById('win').style.display = "none";
+
+        try {
+            // Appel via le proxy Nginx
+            const r = await fetch('/api/upload', { method: 'POST', body: fd });
+            const res = await r.json();
+
+            if (res.status === "success") {
+                document.getElementById('msg').innerText = "✅ " + res.message;
+                
+                // Génération de l'entête (Th)
+                document.getElementById('h').innerHTML = "<tr>" + 
+                    res.cols.map(c => `<th>${c}</th>`).join('') + "</tr>";
+                
+                // Génération des lignes (Td)
+                let html = "";
+                res.data.forEach(row => {
+                    html += "<tr>" + res.cols.map(c => `<td>${row[c] || ''}</td>`).join('') + "</tr>";
+                });
+                
+                document.getElementById('b').innerHTML = html;
+                document.getElementById('win').style.display = "block";
+            } else {
+                document.getElementById('msg').innerText = "❌ Erreur: " + res.message;
+            }
+        } catch (e) {
+            console.error(e);
+            document.getElementById('msg').innerText = "❌ Erreur de connexion (Vérifiez Docker)";
+        }
+    }
+    </script>
+</body>
+</html>
