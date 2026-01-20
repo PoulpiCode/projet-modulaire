@@ -11,7 +11,7 @@ Ce projet permet l'importation et l'affichage de fichiers CSV volumineux via une
 
 ### 1. Démarrer le projet
 
-Ouvre un terminal dans le dossier du projet et tape :
+Ouvrez un terminal dans le dossier du projet et saisissez :
 
 ```bash
 docker-compose up -d --build
@@ -19,14 +19,14 @@ docker-compose up -d --build
 
 ### 2. Accéder à l'outil
 
-Ouvre ton navigateur à l'adresse suivante :
+Ouvrez votre navigateur à l'adresse suivante :
 
 http://localhost:8080
 
 ### 3. Utilisation
 
-- Clique sur "Choisir un fichier" pour sélectionner ton CSV.
-- Clique sur "Lancer l'import".
+- Cliquez sur "Choisir un fichier" pour sélectionner votre CSV.
+- Cliquez sur "Lancer l'import".
 - Le tableau de prévisualisation s'affichera automatiquement une fois le traitement terminé.
 
 ## Commandes de maintenance
@@ -34,6 +34,7 @@ http://localhost:8080
 | Action | Commande |
 |--------|----------|
 | Arrêter l'outil | `docker-compose down` |
-| Redémarrer après modif | `docker-compose up -d --build` |
+| Redémarrer après modification | `docker-compose up -d --build` |
 | Vérifier l'état | `docker-compose ps` |
 | Voir les logs | `docker logs -f service_traitement` |
+
